@@ -11,9 +11,10 @@
  * @author j3sha
  */
 
-namespace Includes;
+namespace Inc;
 
-final class Init
+
+class Init
 {
     use TableName;
 
@@ -22,6 +23,7 @@ final class Init
      */
     public static function prefixActivation()
     {
+        
         $exit_msg_wp  = sprintf(esc_html__("This plugin requires Wordpress version %s or newer. Please update.",
                 "domain"), PREFIX_WP_VERSION);
         $exit_msg_php = sprintf(esc_html__("This plugin requires PHP version %s or newer. Please update.",
