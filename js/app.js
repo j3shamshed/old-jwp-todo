@@ -35,6 +35,7 @@
                             } else {
                                 this.fetchTodo();
                                 this.todo = true;
+                               this.data.todoName = '';
                             }
                         })
                         .catch((error) => {
@@ -54,8 +55,6 @@
                         this.ids.splice(index, 1);
                     }
                 }
-
-                console.log(this.ids);
             },
             updateTodoName(name) {
                 this.data.todoUpdateName = name;
@@ -72,6 +71,8 @@
                         .then((response) => {
                             if (response.data == 0) {
                                 alert('Data can not update');
+                            }else{
+                                alert('Updated');
                             }
                         })
                         .catch((error) => {
@@ -144,8 +145,9 @@
                 }
             },
             showCompletedList() {
-                this.fetchCompletedTodo();
                 this.todo = false;
+                this.fetchCompletedTodo();
+                
             },
             deleteAllCompleted() {
                 if (confirm("Are You Sure?")) {
@@ -158,6 +160,7 @@
                                     alert('Data can not deleted');
                                 } else {
                                     alert('All clear');
+                                    this.fetchTodo();
                                     this.todo = true;
                                 }
                             })

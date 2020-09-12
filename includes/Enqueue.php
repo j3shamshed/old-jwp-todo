@@ -32,14 +32,11 @@ class Enqueue
             );
             wp_localize_script('prefix-app-js', 'object', $credentials);
 
-// Enqueued script with localized data.
+            // Enqueued script with localized data.
             wp_enqueue_script('some_handle');
 
-//
-//            wp_enqueue_style('prefix-datatable-main-css',
-//                PREFIX_PLUGINURL.'/inpsyde-job/assets/css/datatables.css');
-//            wp_enqueue_style('prefix-modal-css',
-//                PREFIX_PLUGINURL.'/inpsyde-job/assets/css/modal.css');
+            wp_enqueue_style('prefix-custom-css',
+                PREFIX_PLUGINURL.'/jwp-todo/css/custom.css');
         }
     }
 }

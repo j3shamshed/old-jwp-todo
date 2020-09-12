@@ -1,0 +1,71 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Sep 12, 2020, 10:46:52 PM
+    Author     : j3sha
+*/
+
+.jubayer{
+    max-width:100%
+}
+.onInsert{
+    max-width: 100%;
+    /* padding-bottom: 20px; */
+    margin-bottom: 20px;
+}
+.todo, .completeTodo{
+    list-style: none;
+    padding: 0px;
+    max-width: 100%;
+    min-height: 200px;
+    overflow-y: scroll;
+}
+.todo li, .completeTodo li{
+    display:block;
+    margin-bottom: 10px;
+}
+.todo li input[type="checkbox"]{
+    margin-right: 10px;
+}
+.todo li input[type="text"]{
+    margin-right: 10px;
+    border: 0px;
+}
+.todo li input[type="text"]:focus{
+    border: 1px solid green;
+}
+.todo li a{
+    float:right;
+}
+.completeTodo li{
+    text-decoration: line-through;
+}
+.controller{
+    list-style: none;
+    padding: 0px;
+}
+.controller li{
+    display: inline;
+}
+
+.controller li{
+    border: 1px solid green;
+    padding: 7px;
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.controller li button, .controller li button:active, .controller li button:focus{
+    border: 0px!important;
+    padding: 0px;
+    background: transparent;
+    cursor: pointer;
+    outline: 0px;
+}
+.controller li button:hover{
+    color:green;
+    font-weight: bold;
+}

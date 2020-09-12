@@ -172,14 +172,14 @@ class Actions
     {
         $vueId = apply_filters('prefix_change_vue_id', 'jubayerID');
         //$str   = "<div id='".esc_attr($vueId)."'><todo-component v-bind:todo='message'></todo-component></div>";
-        $str   = "<div id='".esc_attr($vueId)."'>"
-            ."<input type='text' v-model='data.todoName' @keyup.enter='onInsert'>"
-            ."<ul v-if='todo'>"
+        $str   = "<div class='jubayer' id='".esc_attr($vueId)."'><h4>".esc_html__('To-Do Lists','domain')."</h4>"
+            ."<input class='onInsert' type='text' v-model='data.todoName' @keyup.enter='onInsert' ref='onInsert'>"
+            ."<ul class='todo' v-if='todo'>"
             ."<li v-for='todoVal in todos' :key='todoVal.id'><input type='checkbox' @click='updateId(todoVal.id)'>"
             ."<input type='text' v-model='todoVal.name' @click='updateTodoName(todoVal.name)' @keyup.enter='onUpdate(todoVal.id)' :ref='todoVal.id'><a href='#' @click='onDelete(todoVal.id)'>delete</a></li></ul>"
-            ."<ul v-else>"
+            ."<ul class='completeTodo' v-else>"
             ."<li v-for='todoCom in todos' :key='todoCom.id'>{{todoCom.name}}</li></ul>"
-            ."<ul>"
+            ."<ul class='controller'>"
             ."<li>({{count}})Todo</li>"
             ."<li><button @click='showToDoList'>All</button></li>"
             ."<li><button @click='makeItComplete'>Active</button></li>"
