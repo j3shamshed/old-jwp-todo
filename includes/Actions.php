@@ -22,13 +22,13 @@ class Actions
                     'methods' => 'GET',
                     'callback' => array($this, 'prefixGetTodo'),
                     'permission_callback' => function () {
-                        return current_user_can('edit_others_posts');
+                        return '';
                     }
             ));
             register_rest_route('jwptodo/v1', '/allComplete',
                 array(
                     'methods' => 'GET',
-                    'callback' => array($this, 'prefixGetTodo'),
+                    'callback' => array($this, 'prefixGetAllActiveTodo'),
                     'permission_callback' => function () {
                         return current_user_can('edit_others_posts');
                     }
@@ -41,7 +41,93 @@ class Actions
                         return current_user_can('edit_others_posts');
                     }
             ));
+            register_rest_route('jwptodo/v1', '/update/(?P<id>\d+)',
+                array(
+                    'methods' => 'POST',
+                    'callback' => array($this, 'prefixUpdateTodo'),
+                    'permission_callback' => function () {
+                        return current_user_can('edit_others_posts');
+                    }
+            ));
+            register_rest_route('jwptodo/v1', '/makeItComplete',
+                array(
+                    'methods' => 'POST',
+                    'callback' => array($this, 'prefixMakeItCompleteTodo'),
+                    'permission_callback' => function () {
+                        return current_user_can('edit_others_posts');
+                    }
+            ));
+            register_rest_route('jwptodo/v1', '/delete/(?P<id>\d+)',
+                array(
+                    'methods' => 'DELETE',
+                    'callback' => array($this, 'prefixDeleteTodo'),
+                    'permission_callback' => function () {
+                        return current_user_can('edit_others_posts');
+                    }
+            ));
+            register_rest_route('jwptodo/v1', '/deleteAllCompleted',
+                array(
+                    'methods' => 'DELETE',
+                    'callback' => array($this, 'prefixDeleteAllCompleted'),
+                    'permission_callback' => function () {
+                        return current_user_can('edit_others_posts');
+                    }
+            ));
         });
+    }
+
+    public function prefixDeleteTodo($data)
+    {
+        global $wpdb;
+        $tableName = self::getTableName();
+        return $wpdb->delete($tableName, array('id' => $data['id']), array('%d'));
+    }
+
+    public function prefixDeleteAllCompleted()
+    {
+        global $wpdb;
+        $tableName = self::getTableName();
+        return $wpdb->delete($tableName,
+                array('flag' => esc_html__('active', 'domain')), array('%s'));
+    }
+
+    public function prefixUpdateTodo($data)
+    {
+        global $wpdb;
+        $tableName = self::getTableName();
+        $id        = $data['id'];
+        if (isset($_POST['name'])) {
+            return $wpdb->update(
+                    $tableName,
+                    array(
+                        'name' => esc_html($_POST['name'])
+                    ), array('id' => $id),
+                    array(
+                        '%s',
+                    ), array('%d')
+            );
+        }
+    }
+
+    public function prefixMakeItCompleteTodo()
+    {
+        global $wpdb;
+        $tableName = self::getTableName();
+        if (isset($_POST['ids'])) {
+            $ids = $_POST['ids'];
+            foreach ($ids as $value):
+                $wpdb->update(
+                    $tableName,
+                    array(
+                        'flag' => esc_html__('active', 'domain')
+                    ), array('id' => $value),
+                    array(
+                        '%s',
+                    ), array('%d')
+                );
+            endforeach;
+            return true;
+        }
     }
 
     public function prefixPostTodo()
@@ -50,8 +136,6 @@ class Actions
         $tableName = self::getTableName();
         if (isset($_POST['name'])) {
             $name = esc_html($_POST['name']);
-//            $query = "INSERT INTO $tableName (flag, name) VALUES ('todo', '$name')";
-//            return $wpdb->get_results($query);
 
             return $wpdb->query(
                     $wpdb->prepare(
@@ -70,7 +154,16 @@ class Actions
     {
         global $wpdb;
         $tableName = self::getTableName();
-        $query     = "SELECT id,flag,name FROM $tableName";
+        $query     = "SELECT id,name FROM $tableName WHERE flag='todo'";
+        $list      = $wpdb->get_results($query);
+        return $list;
+    }
+
+    public function prefixGetAllActiveTodo()
+    {
+        global $wpdb;
+        $tableName = self::getTableName();
+        $query     = "SELECT id,name FROM $tableName WHERE flag='active'";
         $list      = $wpdb->get_results($query);
         return $list;
     }
@@ -83,15 +176,15 @@ class Actions
             ."<input type='text' v-model='data.todoName' @keyup.enter='onInsert'>"
             ."<ul v-if='todo'>"
             ."<li v-for='todoVal in todos' :key='todoVal.id'><input type='checkbox' @click='updateId(todoVal.id)'>"
-            ."<input type='text' v-model='todoVal.name' @click='updateTodoName(todoVal.name)' @keyup.enter='onUpdate(todoVal.id)'><a href='#' @click='onDelete(todoVal.id)'>delete</a></li></ul>"
+            ."<input type='text' v-model='todoVal.name' @click='updateTodoName(todoVal.name)' @keyup.enter='onUpdate(todoVal.id)' :ref='todoVal.id'><a href='#' @click='onDelete(todoVal.id)'>delete</a></li></ul>"
             ."<ul v-else>"
-            ."<li v-for='todoCom in todoComplete' :key='todoCom.id'>{{todoCom.name}}</li></ul>"
+            ."<li v-for='todoCom in todos' :key='todoCom.id'>{{todoCom.name}}</li></ul>"
             ."<ul>"
-            ."<li>({{count}})Lists</li>"
+            ."<li>({{count}})Todo</li>"
             ."<li><button @click='showToDoList'>All</button></li>"
             ."<li><button @click='makeItComplete'>Active</button></li>"
             ."<li><button @click='showCompletedList'>Completed</button></li>"
-            ."<li><button @click='deleteAllCompleted'>Clear Completed</button></li></ul>"
+            ."<li><button @click='deleteAllCompleted'>Clear ALl Completed</button></li></ul>"
             ."</div>";
         return $str;
     }

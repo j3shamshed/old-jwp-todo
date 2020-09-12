@@ -13,7 +13,7 @@
             todos: [],
             ids: [],
             count: 0,
-            todo: true
+            todo: true,
         },
         mounted: function () {
             //console.log("Hello Vue!");
@@ -34,6 +34,7 @@
                                 alert('Data can not save');
                             } else {
                                 this.fetchTodo();
+                                this.todo = true;
                             }
                         })
                         .catch((error) => {
@@ -60,10 +61,40 @@
                 this.data.todoUpdateName = name;
             },
             onUpdate(id) {
-                alert(id);
+                this.data.todoUpdateName = this.$refs[id][0].value;
+                var dataUpdate = {
+                    name: this.data.todoUpdateName,
+                };
+                axios.post(object.root + 'jwptodo/v1/update/' + id, Qs.stringify(dataUpdate),
+                        {
+                            headers: {'X-WP-Nonce': object.nonce},
+                        })
+                        .then((response) => {
+                            if (response.data == 0) {
+                                alert('Data can not update');
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
             },
             onDelete(id) {
-                alert('delete');
+                if (confirm("Are You Sure?")) {
+                    axios.delete(object.root + 'jwptodo/v1/delete/' + id,
+                            {
+                                headers: {'X-WP-Nonce': object.nonce},
+                            })
+                            .then((response) => {
+                                if (response.data == 0) {
+                                    alert('Data can not deleted');
+                                } else {
+                                    this.fetchTodo();
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                }
             },
             fetchTodo() {
                 axios.get(object.root + 'jwptodo/v1/all', {
@@ -82,11 +113,58 @@
                     headers: {'X-WP-Nonce': object.nonce}
                 })
                         .then((response) => {
-
+                            this.todos = response.data;
                         })
                         .catch((error) => {
                             console.log(error);
                         });
+            },
+            showToDoList() {
+                this.todo = true;
+                this.fetchTodo();
+            },
+            makeItComplete() {
+                var dataUpdate = {
+                    ids: this.ids,
+                };
+                if (this.ids.length > 0) {
+                    axios.post(object.root + 'jwptodo/v1/makeItComplete', Qs.stringify(dataUpdate),
+                            {
+                                headers: {'X-WP-Nonce': object.nonce},
+                            })
+                            .then((response) => {
+                                this.ids = [];
+                                this.fetchTodo();
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                } else {
+                    alert('No todo selected');
+                }
+            },
+            showCompletedList() {
+                this.fetchCompletedTodo();
+                this.todo = false;
+            },
+            deleteAllCompleted() {
+                if (confirm("Are You Sure?")) {
+                    axios.delete(object.root + 'jwptodo/v1/deleteAllCompleted',
+                            {
+                                headers: {'X-WP-Nonce': object.nonce},
+                            })
+                            .then((response) => {
+                                if (response.data == 0) {
+                                    alert('Data can not deleted');
+                                } else {
+                                    alert('All clear');
+                                    this.todo = true;
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                }
             }
         }
     });
