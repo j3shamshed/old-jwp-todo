@@ -29,5 +29,5 @@ if (class_exists(Init::class)) {
     
     register_activation_hook(__FILE__, 'Inc\\Init::prefixActivation');
     register_uninstall_hook(__FILE__,'Inc\\Init::prefixUninstall');
-    //Init::prefixRegisterServices();
+    Init::prefixRegisterServices();
 }

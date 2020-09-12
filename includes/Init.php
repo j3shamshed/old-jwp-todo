@@ -13,17 +13,55 @@
 
 namespace Inc;
 
-
 class Init
 {
+
     use TableName;
+
+    /**
+     * Store all the classes inside an array
+     * @return array Full list of classes
+     */
+    public static function prefixGetServices()
+    {
+        return [
+            Actions::class,
+            Enqueue::class
+        ];
+    }
+
+    /**
+     * Loop through the classes, initialize them
+     * and call the register() method if it exists
+     * @return
+     */
+    public static function prefixRegisterServices()
+    {
+        foreach (self::prefixGetServices() as $class) {
+            $service = self::prefixInstantiate($class);
+            if (method_exists($service, 'prefixRegister')) {
+                $service->prefixRegister();
+            }
+        }
+    }
+
+    /**
+     * Initialize the class
+     * @param  class $class    class from the services array
+     * @return class instance  new instance of the class
+     */
+    private static function prefixInstantiate($class)
+    {
+        $service = new $class();
+        return $service;
+    }
 
     /**
      * Checking PHP and WordPress Versions
      */
     public static function prefixActivation()
     {
-        
+
         $exit_msg_wp  = sprintf(esc_html__("This plugin requires Wordpress version %s or newer. Please update.",
                 "domain"), PREFIX_WP_VERSION);
         $exit_msg_php = sprintf(esc_html__("This plugin requires PHP version %s or newer. Please update.",
@@ -42,8 +80,8 @@ class Init
     /**
      * Uninstall Plugin
      */
-
-    public static function prefixUninstall(){
+    public static function prefixUninstall()
+    {
         global $wpdb;
         $tableName = self::getTableName();
         $wpdb->query("DROP TABLE IF EXISTS $tableName");
@@ -93,12 +131,12 @@ class Init
     public static function prefixAddTables()
     {
         global $wpdb;
-        $table_name      = $tableName = self::getTableName();
+        $table_name      = $tableName       = self::getTableName();
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            falg text NOT NULL,
+            flag text NOT NULL,
             name varchar(55) DEFAULT '' NOT NULL,
             PRIMARY KEY  (id)
           ) $charset_collate;";

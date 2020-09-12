@@ -1,9 +1,9 @@
 {
-    "name": "j3shamshed/wp-todo",
+    "name": "j3shamshed/jwp-todo",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-only",
     "description": "weDevs job test.",
-    "homepage": "https://github.com/j3shamshed/wp-todo.git",
+    "homepage": "https://github.com/j3shamshed/jwp-todo.git",
     "authors": [
         {
             "name": "Jubayer Shamshed",
@@ -16,7 +16,7 @@
         "weDevs"
     ],
     "support": {
-        "issues": "https://github.com/jeshamshed/wp-todo/issues"
+        "issues": "https://github.com/jeshamshed/jwp-todo/issues"
     },
     "require": {
         "php": ">=7.0",
